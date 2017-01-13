@@ -6,6 +6,7 @@ import gevent.monkey
 gevent.monkey.patch_all()
 
 import pandas as pd
+import random
 
 
 class HitTheLibrary(object):
@@ -16,17 +17,21 @@ class HitTheLibrary(object):
 
     def __init__(self):
         super(HitTheLibrary, self).__init__()
+        self.count = 0
+        self.__run()
 
     def __core(self, tel_num):
-        print('Running in tel_num: %s' + tel_num)
-
-        print('Explicit context switch to foo again')
+        gevent.sleep(1)
+        self.count += 1
+        print('Running in tel_num: %s' %tel_num)
+        # print('Explicit context switch to foo again')
 
     def __run(self):
-        with pd.ExcelFile(u'撞库号码.xlsx') as xls:
-            df1 = pd.read_excel(xls, u'十万生活')
-            print 'ssss'
-            tasks = [gevent.spawn(self.__core, i) for i in range(0, 10)]
-            gevent.joinall(tasks)
+        with pd.ExcelFile('test.xlsx') as xls:
+            # df1 = pd.read_excel(xls, '10w')
+            tasks = [gevent.spawn(self.__core, str(tel_num)) for tel_num in xrange(10)]
+            # tasks = (gevent.spawn(self.__core, str(tel_num)) for tel_num in df1[u'手机号码'])
+            print gevent.joinall(tasks,timeout=2)
+            # print self.count
 
 HitTheLibrary()
