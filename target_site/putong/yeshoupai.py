@@ -12,47 +12,45 @@ import random
 import json
 requests.packages.urllib3.disable_warnings()
 
-class ErShouChe(object):
+class YeShouPai(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
     def __init__(self):
-        self.login_url = "http://account.che168.com/password/checkusername"
+        self.login_url = "http://www.thebeastshop.com/user/dologin.htm"
         self.headers = {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Host": "account.che168.com",
-            "Origin": "http://account.che168.com",
-            "Referer": "http://account.che168.com/password/",
+            "Host": "www.thebeastshop.com",
+            "Origin": "http://www.thebeastshop.com",
+            "Referer": "http://www.thebeastshop.com/user/login.htm",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Ch",
         }
         self.data = {
-            "username": None,
-            "usertype": 2,
+            "loginName": None,
+            "password": 123123123,
+            "remeberme": None
         }
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
         
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, ErShouChe.__name__
+        print "ready", tel_num, YeShouPai.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
         
-        self.data["username"] = tel_num
+        self.data["loginName"] = tel_num
         result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-        res = json.loads(result.text)
+        res = result.text
         # res = "-2"
         # print res
         # print json.loads(res).get("success")
         # 注册过
-        # print res.get("returncode")
-        # print "====="
-        # print res.get("message") == u"该用户名不存在"
-        if not res.get("returncode"):
-            table.ix[int(tel_num), 'ershouche'] = 1
+        if not res:
+            table.ix[int(tel_num), 'yeshoupai'] = 1
         # 没注册过
-        elif res.get("message") == u"该用户名不存在":
-            table.ix[int(tel_num), 'ershouche'] = 0
+        elif not json.loads(res).get("success"):
+            table.ix[int(tel_num), 'yeshoupai'] = 0
         else:
-            table.ix[int(tel_num), 'ershouche'] = -1
+            table.ix[int(tel_num), 'yeshoupai'] = -1

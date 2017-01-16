@@ -12,47 +12,46 @@ import random
 import json
 requests.packages.urllib3.disable_warnings()
 
-class ErShouChe(object):
+class GongPengJia(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
     def __init__(self):
-        self.login_url = "http://account.che168.com/password/checkusername"
+        self.login_url = "http://api8.gongpingjia.com/mobile/account/login/"
         self.headers = {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "Host": "account.che168.com",
-            "Origin": "http://account.che168.com",
-            "Referer": "http://account.che168.com/password/",
+            "Host": "api8.gongpingjia.com",
+            "Origin": "http://api8.gongpingjia.com",
+            # "Referer": "http://orders.roseonly.com.cn/pcEntrance/tologin",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Ch",
         }
         self.data = {
-            "username": None,
-            "usertype": 2,
+            "account": None,
+            "password": "hgfgk",
+            "login_type": "username_password",
+            "device\_code": "ffffffff-afae-b8a2-efd9-72b60033c587"
         }
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
         
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, ErShouChe.__name__
+        print "ready", tel_num, GongPengJia.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
         
-        self.data["username"] = tel_num
-        result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
+        self.data["account"] = tel_num
+        result = session.post(self.login_url, data=self.data, headers=self.headers)
         res = json.loads(result.text)
         # res = "-2"
         # print res
         # print json.loads(res).get("success")
         # 注册过
-        # print res.get("returncode")
-        # print "====="
-        # print res.get("message") == u"该用户名不存在"
-        if not res.get("returncode"):
-            table.ix[int(tel_num), 'ershouche'] = 1
+        if res.get("msg") == u"密码错误":
+            table.ix[int(tel_num), 'gongpingjia'] = 1
         # 没注册过
-        elif res.get("message") == u"该用户名不存在":
-            table.ix[int(tel_num), 'ershouche'] = 0
+        elif res.get("msg") == u"该账号不存在":
+            table.ix[int(tel_num), 'gongpingjia'] = 0
         else:
-            table.ix[int(tel_num), 'ershouche'] = -1
+            table.ix[int(tel_num), 'gongpingjia'] = -1
