@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import numpy as np
+
 __author__ = 'xlliu'
 import requests
 import time
@@ -17,10 +19,13 @@ class YouLi(object):
             "verifycode": None,
             "chkboxautologin": "false",
         }
-    def run(self, tel_num, session):
-        rr = random.randint(0, 6)
+    def run(self, tel_num, session, table):
+        rr = random.randint(0, 20)
         time.sleep(rr)
-        print tel_num, rr, session
+        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
+        print "ready", tel_num, type(tel_num)
+        table.ix[int(tel_num), 'youli'] = True
+        print tel_num, session
         self.params["nickName"] = tel_num
         # result = session.get(self.login_url, verify=False, params=self.params)
         
