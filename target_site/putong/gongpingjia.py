@@ -43,7 +43,13 @@ class GongPengJia(object):
         
         self.data["account"] = tel_num
         result = session.post(self.login_url, data=self.data, headers=self.headers)
-        res = json.loads(result.text)
+        try:
+            res = json.loads(result.text)
+        except Exception as e:
+            print "================="
+            print result.text
+            print e
+            print "================="
         # res = "-2"
         # print res
         # print json.loads(res).get("success")

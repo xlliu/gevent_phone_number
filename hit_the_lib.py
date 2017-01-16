@@ -63,11 +63,17 @@ class HitTheLibrary(object):
         # self.test_xlliu = []
         
         self.session = requests.session()
-        self._sites = [HuaLi(), YeShouPai(), RoseOnly(), ErShouChe(), GongPengJia()]
+        self._sites = [
+            HuaLi(), 
+            YeShouPai(), 
+            # RoseOnly(), 
+            # ErShouChe(), 
+            GongPengJia()
+        ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
         # self._sites = []
-        self._step = 5
-        self._sleep = 1
+        self._step = 2
+        self._sleep = 3
         self.__run()
         # self.manageWork()
 
@@ -75,7 +81,7 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=5, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=10, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
@@ -109,18 +115,19 @@ class HitTheLibrary(object):
         gevent.joinall(tasks, raise_error=False)
         
     def __run(self):
-        with pd.ExcelFile('test.xlsx') as xls:
+        with pd.ExcelFile('dev.xlsx') as xls:
             df1 = pd.read_excel(xls, '10w')
-
+        column = u'手机号码'
+        
         # 测试截取30
-        df1 = df1.loc[0:29, [u'电话号码']]
+        df1 = df1.loc[:, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         all_tasks = []
         _pool = multiprocessing.Pool(processes=1)
         for n in xrange(time_num):
             print str(n*self._step), str((n+1)*self._step-1)
-            df2 = df1.loc[n*self._step:(n+1)*self._step-1, [u'电话号码']].values
+            df2 = df1.loc[n*self._step:(n+1)*self._step-1, [column]].values
             tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df2]
             print "===================批次数量: %d===================" %len(tasks)
             all_tasks.extend(tasks)
@@ -168,5 +175,4 @@ if __name__ == '__main__':
 #   pool = Pool(processes=1)
   # Start a worker processes.
 #   result = pool.apply_async(f, [10])
-    print "uuuuu"
     HitTheLibrary()
