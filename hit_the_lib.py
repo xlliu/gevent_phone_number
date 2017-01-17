@@ -89,7 +89,7 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=100, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=15, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
