@@ -5,21 +5,25 @@
 #               builtins=True, signal=True)
 import sys
 
+from requests.exceptions import ProxyError
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests
 import time
-import random
 import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class ErShouChe(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://account.che168.com/password/checkusername"
         self.headers = {
@@ -33,31 +37,42 @@ class ErShouChe(object):
             "username": None,
             "usertype": 2,
         }
+
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
-        
+
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, ErShouChe.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+        result = None
         self.data["username"] = tel_num
-        result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
         try:
+            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
             res = json.loads(result.text)
+
+        except ProxyError:
+            try:
+                time.sleep(2)
+                result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
+                res = json.loads(result.text)
+            except Exception as e:
+                print "================="
+                print e
+                print "================="
+            else:
+                self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            print result.text
+            if not result.text:
+                print result.text
             print e
             print "================="
-        # res = "-2"
-        # print res
-        # print json.loads(res).get("success")
-        # 注册过
-        # print res.get("returncode")
-        # print "====="
-        # print res.get("message") == u"该用户名不存在"
+        else:
+            self.deal_result(res, table, tel_num)
+
+    def deal_result(self, res, table, tel_num):
         if not res.get("returncode"):
             table.ix[int(tel_num), 'ershouche'] = 1
         # 没注册过

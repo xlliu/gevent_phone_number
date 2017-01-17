@@ -5,6 +5,8 @@
 #               builtins=True, signal=True)
 import sys
 
+from requests.exceptions import ProxyError
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -43,20 +45,36 @@ class GongPengJia(object):
         print "ready", tel_num, GongPengJia.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+        result = None
         self.data["account"] = tel_num
-        result = session.post(self.login_url, data=self.data, headers=self.headers)
         try:
+            result = session.post(self.login_url, data=self.data, headers=self.headers)
             res = json.loads(result.text)
+        except ProxyError:
+            try:
+                time.sleep(2)
+                result = session.post(self.login_url, data=self.data, headers=self.headers)
+                res = json.loads(result.text)
+            except Exception as e:
+                print "================="
+                print e
+                print "================="
+            else:
+                self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            print result.text
+            if not result.text:
+                print result.text
             print e
             print "================="
+        else:
+            self.deal_result(res, table, tel_num)
         # res = "-2"
         # print res
         # print json.loads(res).get("success")
         # 注册过
+
+    def deal_result(self, res, table, tel_num):
         if res.get("msg") == u"密码错误":
             table.ix[int(tel_num), 'gongpingjia'] = 1
         # 没注册过
