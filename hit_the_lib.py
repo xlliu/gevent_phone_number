@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import multiprocessing
 
 import gevent
 import gevent.monkey
@@ -13,6 +12,7 @@ gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=Fa
 # gevent.monkey.patch_socket()
 
 import sys
+import multiprocessing
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -61,7 +61,7 @@ class HitTheLibrary(object):
 
     def __init__(self):
         super(HitTheLibrary, self).__init__()
-        # self.test_xlliu = []
+
         # PROXY_HOST = 'proxy.dianhua.cn'
         # PROXY_HOST = "192.168.20.199"
         PROXY_HOST = "120.92.137.32"
@@ -78,7 +78,7 @@ class HitTheLibrary(object):
             GongPengJia()
         ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
-        # self._sites = []
+
         self._step = 5
         self._sleep = 1
 
@@ -94,7 +94,6 @@ class HitTheLibrary(object):
         # if diff:
         #     print "==============================================="
         #     gevent.joinall(tasks, timeout=10, raise_error=False)
-
         # for greenlet in tasks:
         #     print "结束停止切没有异常: %s" %(greenlet.successful() if greenlet.successful() else False)
         #     print "结束停止: %s" %(greenlet.ready() if greenlet.ready() else False)
@@ -103,22 +102,15 @@ class HitTheLibrary(object):
         # print('Explicit context switch to foo again')
 
     def __table(self, phone_numbers):
-        # for v in phone_numbers.values:
-        #     print v, type(v), np.array(v.tolist()), type(np.array(v.tolist()))
         pn_list = map(lambda x: x.tolist()[0], phone_numbers.values)
-        # print pn_list
         data = pd.DataFrame(index=pn_list, columns=self._sites_table_columns)
-        print len(data.index)
+        print "总条目数: %d" %len(data.index)
         return data
 
-    def return_params(self, df):
-        # self.test_xlliu.append("1")
-        return df
-        # return [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df]
+    def return_params(self, dataframe):
+        return dataframe
 
     def __generator_tasks(self, df):
-        # self.test_xlliu.append("2")
-        # print "into %s" %self.__generator_tasks.__name__
         tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df]
         gevent.joinall(tasks, raise_error=False)
 
@@ -132,17 +124,17 @@ class HitTheLibrary(object):
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         all_tasks = []
-        _pool = multiprocessing.Pool(processes=1)
+        _pool = multiprocessing.Pool(processes=3)
         for n in xrange(time_num):
             print str(n * self._step), str((n + 1) * self._step - 1)
             df2 = df1.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
             tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df2]
-            print "===================批次数量: %d===================" % len(tasks)
+            print "===================GoGoGo: %d===================" % len(tasks)
             all_tasks.extend(tasks)
             _pool.apply_async(self.return_params, args=(df2,), callback=self.__generator_tasks)
             time.sleep(self._sleep)
         # print self.test_xlliu
-        # _pool.close()
+        _pool.close()
         # _pool.join()
         nat = len(all_tasks)
         print "all_tasks: %d" % nat
@@ -163,20 +155,7 @@ class HitTheLibrary(object):
                 break
             time.sleep(1)
             n += 1
-
-        # print "all_success: %d" %len(success_tasks_call)
-        # for greenlet in tasks:
-        #     print "结束停止切没有异常: %s" %(greenlet.successful() if greenlet.successful() else False)
-        #     print "结束停止: %s" %(greenlet.ready() if greenlet.ready() else False)
-        #     print "没被捕获的异常: %s" %greenlet.exception
-
         print '============================='
-        # gevent.sleep(2)
-        # for greenlet in tasks:
-        #     print "结束停止切没有异常: %s" %(greenlet.successful() if greenlet.successful() else False)
-        #     print "结束停止: %s" %(greenlet.ready() if greenlet.ready() else False)
-        #     print "没被捕获的异常: %s" %greenlet.exception
-        # print self.count
 
 
 if __name__ == '__main__':
