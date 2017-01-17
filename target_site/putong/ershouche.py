@@ -43,8 +43,12 @@ class ErShouChe(object):
         # print tel_num, session
         
         self.data["username"] = tel_num
-        result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
         try:
+            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
+            res = json.loads(result.text)
+        except ProxyError as e:
+            time.sleep(2)
+            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
             res = json.loads(result.text)
         except Exception as e:
             print "================="

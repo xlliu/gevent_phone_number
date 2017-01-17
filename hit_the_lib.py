@@ -125,7 +125,7 @@ class HitTheLibrary(object):
         column = u'手机号码'
 
         # 测试截取30
-        df1 = df1.loc[:99, [column]]
+        df1 = df1.loc[:10000, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         all_tasks = []
