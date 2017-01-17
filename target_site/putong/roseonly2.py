@@ -3,7 +3,10 @@
 # gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=False, os=True, ssl=True, httplib=False,
 #               subprocess=True, sys=False, aggressive=True, Event=False,
 #               builtins=True, signal=True)
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests
@@ -33,12 +36,12 @@ class RoseOnly(object):
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
-        
+
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, RoseOnly.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+
         self.data["username"] = tel_num
         result = session.get(self.login_url, verify=False, params=self.data, headers=self.headers)
         try:

@@ -61,19 +61,23 @@ class HitTheLibrary(object):
     def __init__(self):
         super(HitTheLibrary, self).__init__()
         # self.test_xlliu = []
-        
+        PROXY_HOST = 'proxy.dianhua.cn'
+        PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
+                   'https': 'https://{}:8080'.format(PROXY_HOST)}
+
         self.session = requests.session()
+        self.session.proxies = PROXIES
         self._sites = [
-            HuaLi(), 
-            YeShouPai(), 
-            # RoseOnly(), 
-            # ErShouChe(), 
+            HuaLi(),
+            YeShouPai(),
+            RoseOnly(),
+            ErShouChe(),
             GongPengJia()
         ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
         # self._sites = []
-        self._step = 2
-        self._sleep = 3
+        self._step = 10
+        self._sleep = 1
         self.__run()
         # self.manageWork()
 
@@ -81,12 +85,12 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=10, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=15, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
         #     gevent.joinall(tasks, timeout=10, raise_error=False)
-            
+
         # for greenlet in tasks:
         #     print "结束停止切没有异常: %s" %(greenlet.successful() if greenlet.successful() else False)
         #     print "结束停止: %s" %(greenlet.ready() if greenlet.ready() else False)
@@ -102,7 +106,7 @@ class HitTheLibrary(object):
         data = pd.DataFrame(index=pn_list, columns=self._sites_table_columns)
         print len(data.index)
         return data
-        
+
     def return_params(self, df):
         # self.test_xlliu.append("1")
         return df
@@ -113,14 +117,14 @@ class HitTheLibrary(object):
         # print "into %s" %self.__generator_tasks.__name__
         tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df]
         gevent.joinall(tasks, raise_error=False)
-        
+
     def __run(self):
         with pd.ExcelFile('dev.xlsx') as xls:
             df1 = pd.read_excel(xls, '10w')
         column = u'手机号码'
-        
+
         # 测试截取30
-        df1 = df1.loc[:, [column]]
+        df1 = df1.loc[:99, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         all_tasks = []
@@ -155,14 +159,14 @@ class HitTheLibrary(object):
                 break
             time.sleep(1)
             n += 1
-            
-            
+
+
         # print "all_success: %d" %len(success_tasks_call)
         # for greenlet in tasks:
         #     print "结束停止切没有异常: %s" %(greenlet.successful() if greenlet.successful() else False)
         #     print "结束停止: %s" %(greenlet.ready() if greenlet.ready() else False)
         #     print "没被捕获的异常: %s" %greenlet.exception
-        
+
         print '============================='
         # gevent.sleep(2)
         # for greenlet in tasks:
