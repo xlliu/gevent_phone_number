@@ -72,8 +72,8 @@ class HitTheLibrary(object):
         ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
         # self._sites = []
-        self._step = 2
-        self._sleep = 3
+        self._step = 3
+        self._sleep = 4
         self.__run()
         # self.manageWork()
 
