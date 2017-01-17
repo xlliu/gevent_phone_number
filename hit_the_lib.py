@@ -69,7 +69,7 @@ class HitTheLibrary(object):
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        # self.session.proxies = PROXIES
+        self.session.proxies = PROXIES
         self._sites = [
             HuaLi(),
             YeShouPai(),
