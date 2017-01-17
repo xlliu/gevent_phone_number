@@ -63,7 +63,7 @@ class GongPengJia(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if not result.text:
+            if result.text:
                 print result.text
             print e
             print "================="
