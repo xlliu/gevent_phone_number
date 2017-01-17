@@ -3,7 +3,10 @@
 # gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=False, os=True, ssl=True, httplib=False,
 #               subprocess=True, sys=False, aggressive=True, Event=False,
 #               builtins=True, signal=True)
+import sys
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests

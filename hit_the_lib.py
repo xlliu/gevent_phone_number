@@ -78,6 +78,7 @@ class HitTheLibrary(object):
         # self._sites = []
         self._step = 10
         self._sleep = 1
+
         self.__run()
         # self.manageWork()
 
