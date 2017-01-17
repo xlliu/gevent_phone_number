@@ -5,21 +5,23 @@
 #               builtins=True, signal=True)
 import sys
 
+from target_site.common import CommonUtils
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests
-import time
-import random
-import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class GongPengJia(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://api8.gongpingjia.com/mobile/account/login/"
         self.headers = {
@@ -35,24 +37,18 @@ class GongPengJia(object):
             "login_type": "username_password",
             "device\_code": "ffffffff-afae-b8a2-efd9-72b60033c587"
         }
+
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
-        
+
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, GongPengJia.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+
         self.data["account"] = tel_num
-        result = session.post(self.login_url, data=self.data, headers=self.headers)
-        try:
-            res = json.loads(result.text)
-        except Exception as e:
-            print "================="
-            print result.text
-            print e
-            print "================="
+        res, result = CommonUtils.request_session(self.login_url, self.data, self.headers, session)
         # res = "-2"
         # print res
         # print json.loads(res).get("success")

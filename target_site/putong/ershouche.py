@@ -5,21 +5,23 @@
 #               builtins=True, signal=True)
 import sys
 
+from target_site.common import CommonUtils
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests
-import time
-import random
-import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class ErShouChe(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://account.che168.com/password/checkusername"
         self.headers = {
@@ -33,28 +35,18 @@ class ErShouChe(object):
             "username": None,
             "usertype": 2,
         }
+
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
-        
+
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, ErShouChe.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+
         self.data["username"] = tel_num
-        try:
-            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-            res = json.loads(result.text)
-        except ProxyError as e:
-            time.sleep(2)
-            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-            res = json.loads(result.text)
-        except Exception as e:
-            print "================="
-            print result.text
-            print e
-            print "================="
+        res, result = CommonUtils.request_session(self.login_url, self.data, self.headers, session)
         # res = "-2"
         # print res
         # print json.loads(res).get("success")

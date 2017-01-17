@@ -5,21 +5,24 @@
 #               builtins=True, signal=True)
 import sys
 
+from target_site.common import CommonUtils
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 __author__ = 'xlliu'
 import requests
-import time
-import random
 import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class YeShouPai(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://www.thebeastshop.com/user/dologin.htm"
         self.headers = {
@@ -34,21 +37,18 @@ class YeShouPai(object):
             "password": 123123123,
             "remeberme": None
         }
+
     def run(self, tel_num, session, table):
         # rr = random.randint(10, 20)
         # time.sleep(rr)
-        
+
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, YeShouPai.__name__
         # table.ix[int(tel_num), 'youli'] = True
         # print tel_num, session
-        
+
         self.data["loginName"] = tel_num
-        result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-        res = result.text
-        # res = "-2"
-        # print res
-        # print json.loads(res).get("success")
+        res, result = CommonUtils.request_session(self.login_url, self.data, self.headers, session)
         # 注册过
         if not res:
             table.ix[int(tel_num), 'yeshoupai'] = 1

@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
+
 import multiprocessing
+
 import gevent
 import gevent.monkey
+
 gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=False, os=True, ssl=True, httplib=False,
-              subprocess=True, sys=False, aggressive=True, Event=False,
-              builtins=True, signal=True)
+                        subprocess=True, sys=False, aggressive=True, Event=False,
+                        builtins=True, signal=True)
 # gevent.monkey.patch_select()
 # gevent.monkey.patch_socket()
 
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 import pandas as pd
-import numpy as np
-import random
 import requests
 import math
 import time
-import copy
 
-from target_site.xiaodai import *
 from target_site.putong import *
 
 import copy_reg
@@ -33,6 +33,7 @@ def _pickle_method(m):
         return getattr, (m.im_class, m.im_func.func_name)
     else:
         return getattr, (m.im_self, m.im_func.func_name)
+
 
 copy_reg.pickle(types.MethodType, _pickle_method)
 
@@ -131,10 +132,10 @@ class HitTheLibrary(object):
         all_tasks = []
         _pool = multiprocessing.Pool(processes=1)
         for n in xrange(time_num):
-            print str(n*self._step), str((n+1)*self._step-1)
-            df2 = df1.loc[n*self._step:(n+1)*self._step-1, [column]].values
+            print str(n * self._step), str((n + 1) * self._step - 1)
+            df2 = df1.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
             tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df2]
-            print "===================批次数量: %d===================" %len(tasks)
+            print "===================批次数量: %d===================" % len(tasks)
             all_tasks.extend(tasks)
             _pool.apply_async(self.return_params, args=(df2,), callback=self.__generator_tasks)
             time.sleep(self._sleep)
@@ -142,7 +143,7 @@ class HitTheLibrary(object):
         # _pool.close()
         # _pool.join()
         nat = len(all_tasks)
-        print "all_tasks: %d" %nat
+        print "all_tasks: %d" % nat
         # 轮询
         n = 0
         while True:
@@ -152,15 +153,14 @@ class HitTheLibrary(object):
                 cc = 1 if x.ready() else 0
                 # if cc:
                 #     nat-=1
-                c+=cc
-            print "读秒次数: %d 已完成: %d/总数: %d "%(n, c, len(all_tasks))
+                c += cc
+            print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(all_tasks))
             if c == nat:
                 time.sleep(1)
-                self._TABLE.to_csv(path_or_buf="./data.csv",chunksize=5000)
+                self._TABLE.to_csv(path_or_buf="./data.csv", chunksize=5000)
                 break
             time.sleep(1)
             n += 1
-
 
         # print "all_success: %d" %len(success_tasks_call)
         # for greenlet in tasks:
@@ -176,8 +176,9 @@ class HitTheLibrary(object):
         #     print "没被捕获的异常: %s" %greenlet.exception
         # print self.count
 
+
 if __name__ == '__main__':
-#   pool = Pool(processes=1)
-  # Start a worker processes.
-#   result = pool.apply_async(f, [10])
+    #   pool = Pool(processes=1)
+    # Start a worker processes.
+    #   result = pool.apply_async(f, [10])
     HitTheLibrary()
