@@ -13,15 +13,17 @@ sys.setdefaultencoding('utf8')
 __author__ = 'xlliu'
 import requests
 import time
-import random
 import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class GongPengJia(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://api8.gongpingjia.com/mobile/account/login/"
         self.headers = {
@@ -35,16 +37,11 @@ class GongPengJia(object):
             "account": None,
             "password": "hgfgk",
             "login_type": "username_password",
-            "device\_code": "ffffffff-afae-b8a2-efd9-72b60033c587"
+            "device_code": "ffffffff-afae-b8a2-efd9-72b60033c587"
         }
+
     def run(self, tel_num, session, table):
-        # rr = random.randint(10, 20)
-        # time.sleep(rr)
-        
-        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, GongPengJia.__name__
-        # table.ix[int(tel_num), 'youli'] = True
-        # print tel_num, session
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
         self.data["account"] = tel_num
         try:
@@ -69,12 +66,9 @@ class GongPengJia(object):
             print "================="
         else:
             self.deal_result(res, table, tel_num)
-        # res = "-2"
-        # print res
-        # print json.loads(res).get("success")
-        # 注册过
 
     def deal_result(self, res, table, tel_num):
+        # 注册过
         if res.get("msg") == u"密码错误":
             table.ix[int(tel_num), 'gongpingjia'] = 1
         # 没注册过

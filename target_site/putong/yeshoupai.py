@@ -8,15 +8,17 @@ from requests.exceptions import ProxyError
 __author__ = 'xlliu'
 import requests
 import time
-import random
 import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class YeShouPai(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://www.thebeastshop.com/user/dologin.htm"
         self.headers = {
@@ -31,14 +33,9 @@ class YeShouPai(object):
             "password": 123123123,
             "remeberme": None
         }
+
     def run(self, tel_num, session, table):
-        # rr = random.randint(10, 20)
-        # time.sleep(rr)
-        
-        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, YeShouPai.__name__
-        # table.ix[int(tel_num), 'youli'] = True
-        # print tel_num, session
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
         self.data["loginName"] = tel_num
         try:

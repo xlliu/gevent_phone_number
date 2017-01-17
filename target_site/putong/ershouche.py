@@ -39,13 +39,7 @@ class ErShouChe(object):
         }
 
     def run(self, tel_num, session, table):
-        # rr = random.randint(10, 20)
-        # time.sleep(rr)
-
-        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, ErShouChe.__name__
-        # table.ix[int(tel_num), 'youli'] = True
-        # print tel_num, session
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
         self.data["username"] = tel_num
         try:

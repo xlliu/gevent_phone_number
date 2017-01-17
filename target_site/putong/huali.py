@@ -8,16 +8,17 @@ from requests.exceptions import ProxyError
 __author__ = 'xlliu'
 import requests
 import time
-import random
 import json
-import sys
+
 requests.packages.urllib3.disable_warnings()
+
 
 class HuaLi(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://www.hua.com/Passport/Login/SendPhoneLoginSMSCode"
         self.headers = {
@@ -31,14 +32,9 @@ class HuaLi(object):
             "phone": None,
             "imgCode": None,
         }
+
     def run(self, tel_num, session, table):
-        # rr = random.randint(10, 20)
-        # time.sleep(rr)
-        
-        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, HuaLi.__name__
-        # table.ix[int(tel_num), 'youli'] = True
-        # print tel_num, session
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
         self.data["phone"] = tel_num
         try:
@@ -63,9 +59,6 @@ class HuaLi(object):
             print "================="
         else:
             self.deal_result(res, table, tel_num)
-
-        # res = "-2"
-        # print res
 
     def deal_result(self, res, table, tel_num):
         # 注册过

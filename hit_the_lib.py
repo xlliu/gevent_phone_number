@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-
 import gevent
 import gevent.monkey
 
@@ -64,12 +63,13 @@ class HitTheLibrary(object):
 
         # PROXY_HOST = 'proxy.dianhua.cn'
         # PROXY_HOST = "192.168.20.199"
+        self._all_tasks = []
         PROXY_HOST = "120.92.137.32"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        self.session.proxies = PROXIES
+        # self.session.proxies = PROXIES
         self._sites = [
             HuaLi(),
             YeShouPai(),
@@ -78,7 +78,6 @@ class HitTheLibrary(object):
             GongPengJia()
         ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
-
         self._step = 5
         self._sleep = 1
 
@@ -104,7 +103,7 @@ class HitTheLibrary(object):
     def __table(self, phone_numbers):
         pn_list = map(lambda x: x.tolist()[0], phone_numbers.values)
         data = pd.DataFrame(index=pn_list, columns=self._sites_table_columns)
-        print "总条目数: %d" %len(data.index)
+        print "总条目数: %d" % len(data.index)
         return data
 
     def return_params(self, dataframe):
@@ -112,6 +111,7 @@ class HitTheLibrary(object):
 
     def __generator_tasks(self, df):
         tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df]
+        self._all_tasks.extend(tasks)
         gevent.joinall(tasks, raise_error=False)
 
     def __run(self):
@@ -120,42 +120,35 @@ class HitTheLibrary(object):
         column = u'手机号码'
 
         # 测试截取30
-        df1 = df1.loc[:, [column]]
+        df1 = df1.loc[:5, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
-        all_tasks = []
         _pool = multiprocessing.Pool(processes=3)
         for n in xrange(time_num):
             print str(n * self._step), str((n + 1) * self._step - 1)
             df2 = df1.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
-            tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df2]
-            print "===================GoGoGo: %d===================" % len(tasks)
-            all_tasks.extend(tasks)
+            print "===================GoGoGo: %d=====================" % n
             _pool.apply_async(self.return_params, args=(df2,), callback=self.__generator_tasks)
             time.sleep(self._sleep)
-        # print self.test_xlliu
         _pool.close()
         # _pool.join()
-        nat = len(all_tasks)
-        print "all_tasks: %d" % nat
+        nat = self._all_tasks
+        print "all_tasks: %d" % len(nat)
         # 轮询
         n = 0
         while True:
             c = 0
-            for x in all_tasks:
-                # print x.ready(), type(x.ready())
+            for x in self._all_tasks:
                 cc = 1 if x.ready() else 0
-                # if cc:
-                #     nat-=1
                 c += cc
-            print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(all_tasks))
-            if c == nat:
+            print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(nat))
+            if c == len(nat):
                 time.sleep(1)
                 self._TABLE.to_csv(path_or_buf="./data.csv", chunksize=5000)
                 break
             time.sleep(1)
             n += 1
-        print '============================='
+        print '==============END==============='
 
 
 if __name__ == '__main__':

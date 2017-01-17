@@ -13,15 +13,17 @@ sys.setdefaultencoding('utf8')
 __author__ = 'xlliu'
 import requests
 import time
-import random
 import json
+
 requests.packages.urllib3.disable_warnings()
+
 
 class RoseOnly(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
+
     def __init__(self):
         self.login_url = "http://orders.roseonly.com.cn/pcEntrance/login"
         self.headers = {
@@ -33,16 +35,11 @@ class RoseOnly(object):
         }
         self.data = {
             "username": None,
-            "password": 12345+6,
+            "password": 12345 + 6,
         }
-    def run(self, tel_num, session, table):
-        # rr = random.randint(10, 20)
-        # time.sleep(rr)
 
-        # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, RoseOnly.__name__
-        # table.ix[int(tel_num), 'youli'] = True
-        # print tel_num, session
+    def run(self, tel_num, session, table):
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
         self.data["username"] = tel_num
         try:
