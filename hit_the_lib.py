@@ -62,7 +62,8 @@ class HitTheLibrary(object):
     def __init__(self):
         super(HitTheLibrary, self).__init__()
         # self.test_xlliu = []
-        PROXY_HOST = 'proxy.dianhua.cn'
+        # PROXY_HOST = 'proxy.dianhua.cn'
+        PROXY_HOST = "192.168.20.199"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
@@ -73,7 +74,7 @@ class HitTheLibrary(object):
             # YeShouPai(),
             # RoseOnly(),
             ErShouChe(),
-            GongPengJia()
+            # GongPengJia()
         ]
         self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
         # self._sites = []
@@ -87,7 +88,7 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=15, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=20, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
@@ -126,7 +127,7 @@ class HitTheLibrary(object):
         column = u'手机号码'
 
         # 测试截取30
-        df1 = df1.loc[:1000, [column]]
+        df1 = df1.loc[:0, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         all_tasks = []

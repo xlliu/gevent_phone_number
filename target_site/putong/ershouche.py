@@ -51,8 +51,10 @@ class ErShouChe(object):
         try:
             result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
             res = json.loads(result.text)
-
-        except ProxyError:
+        except ProxyError as e:
+            print "================="
+            print e
+            print "================="
             try:
                 time.sleep(2)
                 result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)

@@ -15,7 +15,7 @@ class CommonUtils(object):
     """
     @staticmethod
     def request_session(login_url, data, headers, session):
-        result = None
+
         try:
             result = session.post(login_url, verify=False, data=data, headers=headers)
             res = json.loads(result.text)
