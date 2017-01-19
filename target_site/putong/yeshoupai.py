@@ -45,7 +45,7 @@ class YeShouPai(object):
             try:
                 time.sleep(2)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
-                res = json.loads(result.text)
+                res = result.text
             except Exception as e:
                 print "================="
                 print e

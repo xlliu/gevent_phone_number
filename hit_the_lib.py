@@ -72,30 +72,35 @@ class HitTheLibrary(object):
 
         self.session = requests.session()
         # self.session.proxies = PROXIES
-        self._sites = [
-            # HuaLi(),
-            # YeShouPai(),
-            # RoseOnly(),
-            # ErShouChe(),
-            # GongPengJia(),
-            # AiQianJin(),
-            # DianRong(),
-            # JiMuHeZi(),
-            # MaiDanXia(),
-            RenRenDai(),
-        ]
-        self._sites_table_columns = [
-            # "huali",
-            # "yeshoupai",
-            # "roseonly",
-            # "ershouche",
-            # "gongpingjia",
-            # "aiqianjin",
-            # "dianrong",
-            # "jimuhezi",
-            # "maidanxia",
-            "renrendai",
-        ]
+        self._sites_and_sites_names = {
+            # xlliu 普通
+            # HuaLi(): "huali",
+            # YeShouPai(): "yeshoupai",
+            # RoseOnly(): "roseonly",
+            # ErShouChe(): "ershouche",
+            # GongPengJia(): "gongpingjia",
+            # xlliu 小贷
+            AiQianJin(): "aiqianjin",
+            DianRong(): "dianrong",
+            # JiMuHeZi(): "jimuhezi",
+            MaiDanXia(): "maidanxia",
+            RenRenDai(): "renrendai",
+            # 瑞姐 小贷
+            TouNa(): "touna",
+            WeiDai(): "weidai",
+            XiaoWoJinFu(): "xiaowojinfu",
+            YiDai(): "yidai",
+            YiLongDai(): "yilongdai",
+            YouLi(): "youli",
+            # 志强 小贷
+            Renrendaikuan(): "renrendaikuan",
+            Xiaoqian(): "xiaoqian2",
+            Kuaijin(): "kuaijin",
+            Songshudai(): "songshudai",
+            Feidai(): "feidai",
+        }
+        self._sites = self._sites_and_sites_names.keys()
+        self._sites_table_columns = self._sites_and_sites_names.values()
         self._step = 2
         self._sleep = 3
 
