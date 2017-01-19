@@ -65,12 +65,12 @@ class Songshudai(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res['errorCode'] == 0:
-            table.ix[int(tel_num), 'songshudai'] = 1
+            table.ix[tel_num, 'songshudai'] = 1
         # 没注册过
         elif res['errorCode'] == 1:
-            table.ix[int(tel_num), 'songshudai'] = 0
+            table.ix[tel_num, 'songshudai'] = 0
         else:
-            table.ix[int(tel_num), 'songshudai'] = -1
+            table.ix[tel_num, 'songshudai'] = -1
 
 if __name__ == '__main__':
     session = requests.Session()

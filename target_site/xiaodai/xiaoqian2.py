@@ -61,12 +61,12 @@ class Xiaoqian(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res['status'] == 1:
-            table.ix[int(tel_num), 'xiaoqian2'] = 1
+            table.ix[tel_num, 'xiaoqian2'] = 1
         # 没注册过
         elif res['status'] == 0:
-            table.ix[int(tel_num), 'xiaoqian2'] = 0
+            table.ix[tel_num, 'xiaoqian2'] = 0
         else:
-            table.ix[int(tel_num), 'xiaoqian2'] = -1
+            table.ix[tel_num, 'xiaoqian2'] = -1
 
 if __name__ == '__main__':
     session = requests.Session()

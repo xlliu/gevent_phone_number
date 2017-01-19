@@ -36,7 +36,7 @@ class YiLongDai(object):
 
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, YiLongDai.__name__
-        # table.ix[int(tel_num), 'youli'] = True
+        # table.ix[tel_num, 'youli'] = True
         # print tel_num, session
         result = None
         self.data["mobile"] = tel_num
@@ -66,12 +66,12 @@ class YiLongDai(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res.get("jsonData",{}).get('tip') == u"此手机号已经被注册过":
-            table.ix[int(tel_num), 'yidongdai'] = 1
+            table.ix[tel_num, 'yidongdai'] = 1
         # 没注册过
         elif res.get("jsonData",{}).get('tip') == "success":
-            table.ix[int(tel_num), 'yidongdai'] = 0
+            table.ix[tel_num, 'yidongdai'] = 0
         else:
-            table.ix[int(tel_num), 'yidongdai'] = -1
+            table.ix[tel_num, 'yidongdai'] = -1
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'

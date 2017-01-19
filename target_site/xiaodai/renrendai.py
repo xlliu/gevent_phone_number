@@ -72,12 +72,12 @@ class RenRenDai(object):
 
     def deal_result(self, res, table, tel_num):
         if res.get("code") == 10031:
-            table.ix[int(tel_num), 'renrendai'] = 1
+            table.ix[tel_num, 'renrendai'] = 1
         # 没注册过
         elif res.get("code") == 10022:
-            table.ix[int(tel_num), 'renrendai'] = 0
+            table.ix[tel_num, 'renrendai'] = 0
         else:
-            table.ix[int(tel_num), 'renrendai'] = -1
+            table.ix[tel_num, 'renrendai'] = -1
 
 
 if __name__ == '__main__':

@@ -39,7 +39,7 @@ class TouNa(object):
 
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, TouNa.__name__
-        # table.ix[int(tel_num), 'youli'] = True
+        # table.ix[tel_num, 'youli'] = True
         # print tel_num, session
         result = None
         self.data["proof"] = tel_num
@@ -69,12 +69,12 @@ class TouNa(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res.get("status") == 200:
-            table.ix[int(tel_num), 'touna'] = 1
+            table.ix[tel_num, 'touna'] = 1
         # 没注册过
         elif res.get("status") == 500:
-            table.ix[int(tel_num), 'touna'] = 0
+            table.ix[tel_num, 'touna'] = 0
         else:
-            table.ix[int(tel_num), 'touna'] = -1
+            table.ix[tel_num, 'touna'] = -1
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'

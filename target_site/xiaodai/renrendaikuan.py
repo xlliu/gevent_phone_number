@@ -63,12 +63,12 @@ class Renrendaikuan(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res['msg'] == u'帐号或密码错误，请重新输入!':
-            table.ix[int(tel_num), 'renrendaikuan'] = 1
+            table.ix[tel_num, 'renrendaikuan'] = 1
         # 没注册过
         elif res['msg'] == '帐号不存在，请重新输入!':
-            table.ix[int(tel_num), 'renrendaikuan'] = 0
+            table.ix[tel_num, 'renrendaikuan'] = 0
         else:
-            table.ix[int(tel_num), 'renrendaikuan'] = -1
+            table.ix[tel_num, 'renrendaikuan'] = -1
 
 if __name__ == '__main__':
     session = requests.Session()

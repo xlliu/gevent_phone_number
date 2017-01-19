@@ -38,7 +38,7 @@ class YiDai(object):
 
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, YiDai.__name__
-        # table.ix[int(tel_num), 'youli'] = True
+        # table.ix[tel_num, 'youli'] = True
         # print tel_num, session
         result = None
         self.data["phone"] = tel_num
@@ -68,12 +68,12 @@ class YiDai(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res == "1":
-            table.ix[int(tel_num), 'yidai'] = 1
+            table.ix[tel_num, 'yidai'] = 1
         # 没注册过
         elif res == "0":
-            table.ix[int(tel_num), 'yidai'] = 0
+            table.ix[tel_num, 'yidai'] = 0
         else:
-            table.ix[int(tel_num), 'yidai'] = -1
+            table.ix[tel_num, 'yidai'] = -1
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'

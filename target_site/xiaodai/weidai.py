@@ -39,7 +39,7 @@ class WeiDai(object):
 
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
         print "ready", tel_num, WeiDai.__name__
-        # table.ix[int(tel_num), 'youli'] = True
+        # table.ix[tel_num, 'youli'] = True
         # print tel_num, session
         result = None
         self.data["mobile"] = tel_num
@@ -69,12 +69,12 @@ class WeiDai(object):
     def deal_result(self, res, table, tel_num):
         # 注册过
         if res.get("code") == "-2":
-            table.ix[int(tel_num), 'weidai'] = 1
+            table.ix[tel_num, 'weidai'] = 1
         # 没注册过
         elif res.get("code") == "1":
-            table.ix[int(tel_num), 'weidai'] = 0
+            table.ix[tel_num, 'weidai'] = 0
         else:
-            table.ix[int(tel_num), 'weidai'] = -1
+            table.ix[tel_num, 'weidai'] = -1
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'

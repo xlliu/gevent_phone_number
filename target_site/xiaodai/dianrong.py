@@ -75,12 +75,12 @@ class DianRong(object):
 
     def deal_result(self, res, table, tel_num):
         if res.get("result") == u"success":
-            table.ix[int(tel_num), 'dianrong'] = 1
+            table.ix[tel_num, 'dianrong'] = 1
         # 没注册过
         elif res.get("result") == u"error":
-            table.ix[int(tel_num), 'dianrong'] = 0
+            table.ix[tel_num, 'dianrong'] = 0
         else:
-            table.ix[int(tel_num), 'dianrong'] = -1
+            table.ix[tel_num, 'dianrong'] = -1
 
 
 if __name__ == '__main__':

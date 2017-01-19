@@ -72,12 +72,12 @@ class MaiDanXia(object):
 
     def deal_result(self, res, table, tel_num):
         if res.has_key("data"):
-            table.ix[int(tel_num), 'maidanxia'] = 1
+            table.ix[tel_num, 'maidanxia'] = 1
         # 没注册过
         elif not res.has_key("data"):
-            table.ix[int(tel_num), 'maidanxia'] = 0
+            table.ix[tel_num, 'maidanxia'] = 0
         else:
-            table.ix[int(tel_num), 'maidanxia'] = -1
+            table.ix[tel_num, 'maidanxia'] = -1
 
 
 if __name__ == '__main__':
