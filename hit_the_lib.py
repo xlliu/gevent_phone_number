@@ -38,7 +38,8 @@ copy_reg.pickle(types.MethodType, _pickle_method)
 
 
 class HitTheLibrary(object):
-    """测试号码工具模块
+    """
+    测试号码工具模块
     def BarcodeSearcher(self, x):
         return x*x
 
@@ -69,7 +70,7 @@ class HitTheLibrary(object):
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        # self.session.proxies = PROXIES
+        self.session.proxies = PROXIES
         self._sites = [
             HuaLi(),
             YeShouPai(),
@@ -115,22 +116,27 @@ class HitTheLibrary(object):
         gevent.joinall(tasks, raise_error=False)
 
     def __run(self):
-        with pd.ExcelFile('dev.xlsx') as xls:
+        # with pd.ExcelFile('dev.xlsx') as xls:
+        with pd.ExcelFile('test.xlsx') as xls:
             df1 = pd.read_excel(xls, '10w')
-        column = u'手机号码'
+        # column = u'手机号码'
+        column = u'电话号码'
 
         # 测试截取30
-        df1 = df1.loc[:5, [column]]
+        df1 = df1.loc[:15, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
-        _pool = multiprocessing.Pool(processes=3)
+        # _pool = multiprocessing.Pool(processes=1)
+        # _pool = multiprocessing.Pool()
+        
         for n in xrange(time_num):
             print str(n * self._step), str((n + 1) * self._step - 1)
             df2 = df1.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
             print "===================GoGoGo: %d=====================" % n
-            _pool.apply_async(self.return_params, args=(df2,), callback=self.__generator_tasks)
+            self.__generator_tasks(df2)
+            #_pool.apply_async(self.return_params, args=(df2,), callback=self.__generator_tasks)
             time.sleep(self._sleep)
-        _pool.close()
+        # _pool.close()
         # _pool.join()
         nat = self._all_tasks
         print "all_tasks: %d" % len(nat)
