@@ -18,32 +18,36 @@ import json
 requests.packages.urllib3.disable_warnings()
 
 
-class RenRenDai(object):
+class AiQianJin(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
 
     def __init__(self):
-        self.login_url = "https://nirvana.ucredit.com/nirvana/user/login"
+        self.login_url = "http://v3.iqianjin.com/C2000/M2006/"
         self.headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "nirvana.ucredit.com",
-            "Origin": "chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop",
-            # "Referer": "https://borrower.dianrong.com/borrower-static/wallet/v6.12/forget.html",
-            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-            # "Postman-Token": "a6c8fea8-25f0-66a8-77ea-af3ef06919aa"
+            "Host": "v3.iqianjin.com"
         }
         self.data = {
-            "mobile": None,
-            "password": '123123123',
-            "passwordType": 0,
+            "body":
+                {
+                    "content": None
+                },
+            "comm":
+                {
+                    "pid": "352136069077002",
+                    "type": 3,
+                    "us": 67,
+                    "version": "4.9.0"
+                },
+            "token": ""
         }
 
     def run(self, tel_num, session, table):
         print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         result = None
-        self.data["mobile"] = tel_num
+        self.data["body"]["content"] = tel_num
         try:
             result = session.post(self.login_url, verify=False, json=self.data, headers=self.headers)
             res = json.loads(result.text)
@@ -71,22 +75,22 @@ class RenRenDai(object):
             self.deal_result(res, table, tel_num)
 
     def deal_result(self, res, table, tel_num):
-        if res.get("code") == 10031:
-            table.ix[int(tel_num), 'renrendai'] = 1
+        file_name = "aiqianjin"
+        if res.get("code") == 1:
+            table.ix[int(tel_num), file_name] = 1
         # 没注册过
-        elif res.get("code") == 10022:
-            table.ix[int(tel_num), 'renrendai'] = 0
+        elif res.get("code") == -21:
+            table.ix[int(tel_num), file_name] = 0
         else:
-            table.ix[int(tel_num), 'renrendai'] = -1
-
+            table.ix[int(tel_num), file_name] = -1
 
 if __name__ == '__main__':
     import requests
     import pandas as pd
     tel_num = u'15541860723'
-    table = pd.DataFrame(index=[tel_num, ], columns=[u"dianrong", ])
+    table = pd.DataFrame(columns=[u"aiqianjin"])
     print table
     session = requests.session()
-    test = DianRong()
+    test = AiQianJin()
     test.run(tel_num, session, table)
     print table
