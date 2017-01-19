@@ -82,28 +82,28 @@ class HitTheLibrary(object):
             # GongPengJia(): "gongpingjia",
             # xlliu 小贷
             AiQianJin(): "aiqianjin",
-           # DianRong(): "dianrong",
-           # # JiMuHeZi(): "jimuhezi",
-           # MaiDanXia(): "maidanxia",
-           # RenRenDai(): "renrendai",
-           # # 瑞姐 小贷
-           # TouNa(): "touna",
-           # WeiDai(): "weidai",
-           # XiaoWoJinFu(): "xiaowojinfu",
-           # YiDai(): "yidai",
-           # YiLongDai(): "yilongdai",
-           # YouLi(): "youli",
-           # # 志强 小贷
-           # Renrendaikuan(): "renrendaikuan",
-           # Xiaoqian(): "xiaoqian2",
-           # Kuaijin(): "kuaijin",
-           # Songshudai(): "songshudai",
-           # Feidai(): "feidai",
+            DianRong(): "dianrong",
+            # JiMuHeZi(): "jimuhezi",
+            MaiDanXia(): "maidanxia",
+            RenRenDai(): "renrendai",
+            # 瑞姐 小贷
+            TouNa(): "touna",
+            WeiDai(): "weidai",
+            XiaoWoJinFu(): "xiaowojinfu",
+            YiDai(): "yidai",
+            # YiLongDai(): "yilongdai",
+            YouLi(): "youli",
+            # 志强 小贷
+            Renrendaikuan(): "renrendaikuan",
+            Xiaoqian(): "xiaoqian2",
+            Kuaijin(): "kuaijin",
+            # Songshudai(): "songshudai",
+            Feidai(): "feidai",
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 5
-        self._sleep = 1
+        self._step = 1
+        self._sleep = 10
 
         self.__run()
         # self.manageWork()
@@ -150,7 +150,7 @@ class HitTheLibrary(object):
         print df1.columns[0] == column, df1.columns[0]
         print "========================="
         # 测试截取30
-        df1 = df1.loc[:5, [column]]
+        df1 = df1.loc[:, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         # _pool = multiprocessing.Pool(processes=1)
