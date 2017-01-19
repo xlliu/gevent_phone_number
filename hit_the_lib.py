@@ -60,18 +60,19 @@ class HitTheLibrary(object):
     对电话号码进行测试，
     """
 
-    def __init__(self):
+    def __init__(self, file_name):
         super(HitTheLibrary, self).__init__()
 
-        # PROXY_HOST = 'proxy.dianhua.cn'
+        PROXY_HOST = 'proxy.dianhua.cn'
         # PROXY_HOST = "192.168.20.199"
+        self._file_name = file_name
         self._all_tasks = []
-        PROXY_HOST = "120.92.137.32"
+        # PROXY_HOST = "120.92.137.32"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        # self.session.proxies = PROXIES
+        self.session.proxies = PROXIES
         self._sites_and_sites_names = {
             # xlliu 普通
             # HuaLi(): "huali",
@@ -101,8 +102,8 @@ class HitTheLibrary(object):
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 2
-        self._sleep = 3
+        self._step = 3
+        self._sleep = 0.5
 
         self.__run()
         # self.manageWork()
@@ -138,11 +139,12 @@ class HitTheLibrary(object):
         gevent.joinall(tasks, raise_error=False)
 
     def __run(self):
-        # with pd.ExcelFile('dev.xlsx') as xls:
-        with pd.ExcelFile('test.xlsx') as xls:
-            df1 = pd.read_excel(xls, '10w')
-        # column = u'手机号码'
-        column = u'电话号码'
+        # with pd.ExcelFile(self._file_name) as xls:
+        # with pd.ExcelFile('test.xlsx') as xls:
+        #     df1 = pd.read_excel(xls, '10w')
+        df1 = pd.read_csv(self._file_name)
+        column = u'手机号码'
+        # column = u'电话号码'
 
         # 测试截取30
         df1 = df1.loc[:5, [column]]
@@ -172,7 +174,7 @@ class HitTheLibrary(object):
             print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(nat))
             if c == len(nat):
                 time.sleep(1)
-                self._TABLE.to_csv(path_or_buf="./data.csv", chunksize=5000)
+                self._TABLE.to_csv(path_or_buf="./run_result/%s.csv" % self._file_name.split(r"/")[2], chunksize=5000)
                 break
             time.sleep(1)
             n += 1
@@ -183,4 +185,7 @@ if __name__ == '__main__':
     #   pool = Pool(processes=1)
     # Start a worker processes.
     #   result = pool.apply_async(f, [10])
-    HitTheLibrary()
+    import sys
+    file_name = sys.argv[1]
+    print file_name
+    HitTheLibrary(file_name)
