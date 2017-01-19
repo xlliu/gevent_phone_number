@@ -43,7 +43,7 @@ class Feidai(object):
         self.data["mobile"] = tel_num
         try:
             result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-            res = result.text
+            res = json.loads(result.text)
         except ProxyError:
             try:
                 time.sleep(2)
@@ -76,7 +76,7 @@ class Feidai(object):
 
 if __name__ == '__main__':
     session = requests.Session()
-    login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
+        login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Host": "app.feidai.com",

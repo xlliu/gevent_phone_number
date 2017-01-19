@@ -41,7 +41,7 @@ class Songshudai(object):
         self.login_url = self.login_url + urllib.urlencode(self.data)
         try:
             result = session.get(self.login_url, headers=self.headers)
-            res = result.text
+            res = json.loads(result.text)
         except ProxyError:
             try:
                 time.sleep(2)
