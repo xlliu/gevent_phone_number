@@ -39,7 +39,7 @@ class Renrendaikuan(object):
         self.data["mobile"] = tel_num
         try:
             result = session.post(self.login_url, data=self.data, headers=self.headers)
-            res = result.text
+            res = json.loads(result.text)
         except ProxyError:
             try:
                 time.sleep(2)

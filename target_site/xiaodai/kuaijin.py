@@ -49,7 +49,7 @@ class Kuaijin(object):
         self.data["mobile"] = tel_num
         try:
             result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
-            res = result.text
+            res = json.loads(result.text)
         except ProxyError:
             try:
                 time.sleep(2)
