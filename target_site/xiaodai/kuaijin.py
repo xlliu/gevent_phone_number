@@ -3,6 +3,10 @@
 # gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=False, os=True, ssl=True, httplib=False,
 #               subprocess=True, sys=False, aggressive=True, Event=False,
 #               builtins=True, signal=True)
+
+"""
+Token 及 签名
+"""
 from requests.exceptions import ProxyError
 
 __author__ = 'xlliu'
@@ -13,28 +17,30 @@ import json
 requests.packages.urllib3.disable_warnings()
 
 
-class Feidai(object):
+class Kuaijin(object):
     """
     处理过程
     生成结果文件 ==>> xianhua.xlsx
     """
 
     def __init__(self):
-        self.login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
+        self.login_url = "https://capi.timecash.cn/v2/Token/Create"
         self.headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "app.feidai.com",
             "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 6.0.1; AOSP on HammerHead Build/MOB30H)",
+            "Content-Type": "application/json"
         }
         self.data = {
             "mobile": None,
-            # "mobileDeviceId":"95276306863246326",
-            # "mobileModel":"AOSP on HammerHead",
-            # "client":1,
-            # "mobileSystemId":"6.0.1",
-            # "versionId":"5.0.0",
-            # "mobileOtherInfo":{"width":1080,"height":1776,"brand":"Android","allApp":"你我贷借款,随借随还,RE文件管理器,Via,豌豆荚,diycode"},
-            # "flag":1
+            "app":{
+                "ver": "1.3.4",
+                "os": "6.0.1",
+                "unique_id": "867451026298049",
+                "trid": "1484211727187",
+                "time": "2017-01-12 05:02:07",
+                "app_id": "android",
+                "token": "",
+                "sign": "ccdd0695913d92f0202f794bb2034ee6"
+            }
         }
 
     def run(self, tel_num, session, table):
@@ -66,39 +72,34 @@ class Feidai(object):
 
     def deal_result(self, res, table, tel_num):
         # 注册过
-        if res['code'] == '0000':
-            table.ix[int(tel_num), 'feidai'] = 1
+        if res['code'] == '1000':
+            table.ix[int(tel_num), 'kuaijin'] = 1
         # 没注册过
-        elif res['code'] == '-3003':
-            table.ix[int(tel_num), 'feidai'] = 0
+        elif res['code'] == '2000':
+            table.ix[int(tel_num), 'kuaijin'] = 0
         else:
-            table.ix[int(tel_num), 'feidai'] = -1
+            table.ix[int(tel_num), 'kuaijin'] = -1
 
 if __name__ == '__main__':
     session = requests.Session()
-    login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
+    login_url = "https://capi.timecash.cn/v2/User/ResetPasswordVerifySMS"
     headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Host": "app.feidai.com",
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 6.0.1; AOSP on HammerHead Build/MOB30H)",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
+        "Content-Type": "application/json",
+        "TCSERVERVER": "1.0",
+        # "Transfer-Encoding": "chunked",
+        # "X-Powered-By": "PHP/5.6.24",
     }
     data = {
-        "mobile": None,
-        # "mobileDeviceId":"95276306863246326",
-        # "mobileModel":"AOSP on HammerHead",
-        # "client":1,
-        # "mobileSystemId":"6.0.1",
-        # "versionId":"5.0.0",
-        # "mobileOtherInfo":{"width":1080,"height":1776,"brand":"Android","allApp":"你我贷借款,随借随还,RE文件管理器,Via,豌豆荚,diycode"},
-        # "flag":1
+        "mobile": '18310502300',
     }
     result = session.post(login_url, verify=False, data=data, headers=headers)
     print result.text
     res = json.loads(result.text)
-    if res['code'] == '0000':
+    if res['code'] == '1000':
         print 1
     # 没注册过
-    elif res['code'] == '-3003':
+    elif res['code'] == '2000':
         print 0
     else:
         print -1
