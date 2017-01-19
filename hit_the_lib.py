@@ -82,28 +82,28 @@ class HitTheLibrary(object):
             # GongPengJia(): "gongpingjia",
             # xlliu 小贷
             AiQianJin(): "aiqianjin",
-            DianRong(): "dianrong",
-            # JiMuHeZi(): "jimuhezi",
-            MaiDanXia(): "maidanxia",
-            RenRenDai(): "renrendai",
-            # 瑞姐 小贷
-            TouNa(): "touna",
-            WeiDai(): "weidai",
-            XiaoWoJinFu(): "xiaowojinfu",
-            YiDai(): "yidai",
-            YiLongDai(): "yilongdai",
-            YouLi(): "youli",
-            # 志强 小贷
-            Renrendaikuan(): "renrendaikuan",
-            Xiaoqian(): "xiaoqian2",
-            Kuaijin(): "kuaijin",
-            Songshudai(): "songshudai",
-            Feidai(): "feidai",
+           # DianRong(): "dianrong",
+           # # JiMuHeZi(): "jimuhezi",
+           # MaiDanXia(): "maidanxia",
+           # RenRenDai(): "renrendai",
+           # # 瑞姐 小贷
+           # TouNa(): "touna",
+           # WeiDai(): "weidai",
+           # XiaoWoJinFu(): "xiaowojinfu",
+           # YiDai(): "yidai",
+           # YiLongDai(): "yilongdai",
+           # YouLi(): "youli",
+           # # 志强 小贷
+           # Renrendaikuan(): "renrendaikuan",
+           # Xiaoqian(): "xiaoqian2",
+           # Kuaijin(): "kuaijin",
+           # Songshudai(): "songshudai",
+           # Feidai(): "feidai",
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 3
-        self._sleep = 0.5
+        self._step = 5
+        self._sleep = 1
 
         self.__run()
         # self.manageWork()
@@ -125,7 +125,7 @@ class HitTheLibrary(object):
         # print('Explicit context switch to foo again')
 
     def __table(self, phone_numbers):
-        pn_list = map(lambda x: x.tolist()[0], phone_numbers.values)
+        pn_list = map(lambda x: str(x.tolist()[0]), phone_numbers.values)
         data = pd.DataFrame(index=pn_list, columns=self._sites_table_columns)
         print "总条目数: %d" % len(data.index)
         return data
@@ -142,10 +142,13 @@ class HitTheLibrary(object):
         # with pd.ExcelFile(self._file_name) as xls:
         # with pd.ExcelFile('test.xlsx') as xls:
         #     df1 = pd.read_excel(xls, '10w')
-        df1 = pd.read_csv(self._file_name)
-        column = u'手机号码'
+        df1 = pd.read_csv(self._file_name, header=0)
+        #column = u'手机号码'
+        column = 'tel'
         # column = u'电话号码'
-
+        print "========================="
+        print df1.columns[0] == column, df1.columns[0]
+	print "========================="
         # 测试截取30
         df1 = df1.loc[:5, [column]]
         self._TABLE = self.__table(df1)

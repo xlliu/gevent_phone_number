@@ -76,7 +76,7 @@ class Feidai(object):
 
 if __name__ == '__main__':
     session = requests.Session()
-        login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
+    login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Host": "app.feidai.com",

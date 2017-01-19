@@ -77,12 +77,15 @@ class AiQianJin(object):
     def deal_result(self, res, table, tel_num):
         file_name = "aiqianjin"
         if res.get("code") == 1:
-            table.ix[int(tel_num), file_name] = 1
+            table.ix[str(tel_num), file_name] = 1
+            #table.ix[int(tel_num)] = [1,]
         # 没注册过
         elif res.get("code") == -21:
-            table.ix[int(tel_num), file_name] = 0
+            table.ix[str(tel_num), file_name] = 0
+            #table.ix[int(tel_num)] = [0,]
         else:
-            table.ix[int(tel_num), file_name] = -1
+            table.ix[str(tel_num), file_name] = -1
+            #table.ix[int(tel_num)] = [-1,]
 
 if __name__ == '__main__':
     import requests
