@@ -22,6 +22,7 @@ import math
 import time
 
 from target_site.putong import *
+from target_site.xiaodai import *
 
 import copy_reg
 import types
@@ -70,17 +71,38 @@ class HitTheLibrary(object):
                    'https': 'https://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        self.session.proxies = PROXIES
-        self._sites = [
-            HuaLi(),
-            YeShouPai(),
-            RoseOnly(),
-            ErShouChe(),
-            GongPengJia()
-        ]
-        self._sites_table_columns = ["huali", "yeshoupai", "roseonly", "ershouche", "gongpingjia"]
-        self._step = 5
-        self._sleep = 1
+        # self.session.proxies = PROXIES
+        self._sites_and_sites_names = {
+            # xlliu 普通
+            # HuaLi(): "huali",
+            # YeShouPai(): "yeshoupai",
+            # RoseOnly(): "roseonly",
+            # ErShouChe(): "ershouche",
+            # GongPengJia(): "gongpingjia",
+            # xlliu 小贷
+            AiQianJin(): "aiqianjin",
+            DianRong(): "dianrong",
+            # JiMuHeZi(): "jimuhezi",
+            MaiDanXia(): "maidanxia",
+            RenRenDai(): "renrendai",
+            # 瑞姐 小贷
+            TouNa(): "touna",
+            WeiDai(): "weidai",
+            XiaoWoJinFu(): "xiaowojinfu",
+            YiDai(): "yidai",
+            YiLongDai(): "yilongdai",
+            YouLi(): "youli",
+            # 志强 小贷
+            Renrendaikuan(): "renrendaikuan",
+            Xiaoqian(): "xiaoqian2",
+            Kuaijin(): "kuaijin",
+            Songshudai(): "songshudai",
+            Feidai(): "feidai",
+        }
+        self._sites = self._sites_and_sites_names.keys()
+        self._sites_table_columns = self._sites_and_sites_names.values()
+        self._step = 2
+        self._sleep = 3
 
         self.__run()
         # self.manageWork()
@@ -123,7 +145,7 @@ class HitTheLibrary(object):
         column = u'电话号码'
 
         # 测试截取30
-        df1 = df1.loc[:15, [column]]
+        df1 = df1.loc[:5, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         # _pool = multiprocessing.Pool(processes=1)
