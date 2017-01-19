@@ -116,14 +116,14 @@ class HitTheLibrary(object):
         gevent.joinall(tasks, raise_error=False)
 
     def __run(self):
-        with pd.ExcelFile('dev.xlsx') as xls:
-        # with pd.ExcelFile('test.xlsx') as xls:
+        # with pd.ExcelFile('dev.xlsx') as xls:
+        with pd.ExcelFile('test.xlsx') as xls:
             df1 = pd.read_excel(xls, '10w')
-        column = u'手机号码'
-        # column = u'电话号码'
+        # column = u'手机号码'
+        column = u'电话号码'
 
         # 测试截取30
-        df1 = df1.loc[:, [column]]
+        df1 = df1.loc[:15, [column]]
         self._TABLE = self.__table(df1)
         time_num = int(math.ceil(len(df1.index) / self._step))
         # _pool = multiprocessing.Pool(processes=1)
