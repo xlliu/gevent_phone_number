@@ -69,7 +69,7 @@ class HitTheLibrary(object):
         self._all_tasks = []
         # PROXY_HOST = "120.92.137.32"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
-                   'https': 'https://{}:8080'.format(PROXY_HOST)}
+                   'https': 'http://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
         self.session.proxies = PROXIES
@@ -85,7 +85,7 @@ class HitTheLibrary(object):
             DianRong(): "dianrong",
             # JiMuHeZi(): "jimuhezi",
             MaiDanXia(): "maidanxia",
-            RenRenDai(): "renrendai",
+            # RenRenDai(): "renrendai",
             # 瑞姐 小贷
             TouNa(): "touna",
             WeiDai(): "weidai",
@@ -94,7 +94,7 @@ class HitTheLibrary(object):
             # YiLongDai(): "yilongdai",
             YouLi(): "youli",
             # 志强 小贷
-            Renrendaikuan(): "renrendaikuan",
+            # Renrendaikuan(): "renrendaikuan",
             Xiaoqian(): "xiaoqian2",
             Kuaijin(): "kuaijin",
             # Songshudai(): "songshudai",
@@ -102,8 +102,8 @@ class HitTheLibrary(object):
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 1
-        self._sleep = 10
+        self._step = 5
+        self._sleep = 1
 
         self.__run()
         # self.manageWork()
