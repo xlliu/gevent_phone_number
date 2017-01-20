@@ -24,7 +24,8 @@ class Songshudai(object):
         self.login_url = "https://app.squloan.com/msg/getVerifyCode?"
         self.headers = {
             "Accept":"Application/Json",
-            "Host":"app.squloan.com",
+            # "Host":"app.squloan.com",
+            "Host":"songguodai.com",
         }
         self.data = {
             "access_token":"127a065d16cf2c3d9234be714417859f07bf2f1b",
@@ -55,7 +56,7 @@ class Songshudai(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print e
             print "================="

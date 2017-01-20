@@ -35,7 +35,7 @@ class YiLongDai(object):
         # time.sleep(rr)
 
         # data.ix[['one', 'one'], ['a', 'e', 'd', 'd', 'd']]
-        print "ready", tel_num, YiLongDai.__name__
+        print "Ready time: %d | tel: %s | class: %s" % (time.time(), tel_num, self.__class__.__name__)
         # table.ix[tel_num, 'youli'] = True
         # print tel_num, session
         result = None

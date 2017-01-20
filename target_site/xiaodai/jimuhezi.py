@@ -32,7 +32,7 @@ class JiMuHeZi(object):
             "Origin": "https://passport.jimubox.com",
             "Referer": "https://passport.jimubox.com/authentication/login?redirectUrl=https://www.jimu.com/User/AssetOverview",
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36",
-            "Upgrade-Insecure-Requests": 1
+            "Upgrade-Insecure-Requests": "1"
         }
         self.data = {
             "site": "B662B0F090BE31C1DCB6A13D70E81429",
@@ -49,9 +49,6 @@ class JiMuHeZi(object):
             result = session.get(self.login_url, verify=False, data=self.data, headers=self.headers)
             res = result.text
         except ProxyError as e:
-            print "================="
-            print self.__class__.__name__, e
-            print "================="
             try:
                 time.sleep(2)
                 result = session.get(self.login_url, verify=False, data=self.data, headers=self.headers)
@@ -64,7 +61,7 @@ class JiMuHeZi(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print self.__class__.__name__, e
             print "================="
