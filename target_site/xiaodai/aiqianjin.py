@@ -67,7 +67,7 @@ class AiQianJin(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print self.__class__.__name__, e
             print "================="

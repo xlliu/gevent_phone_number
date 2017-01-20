@@ -56,7 +56,7 @@ class YiLongDai(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print e
             print "================="
@@ -71,7 +71,7 @@ class YiLongDai(object):
         elif res.get("jsonData",{}).get('tip') == "success":
             table.ix[tel_num, 'yidongdai'] = 0
         else:
-            table.ix[tel_num, 'yidongdai'] = -1
+            table.ix[tel_num, 'yidongdai'] = str(res)
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'

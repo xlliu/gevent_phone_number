@@ -51,7 +51,7 @@ class Xiaoqian(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print e
             print "================="

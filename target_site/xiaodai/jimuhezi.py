@@ -70,10 +70,10 @@ class JiMuHeZi(object):
 
     def deal_result(self, res, table, tel_num):
         print res
-        if res in u"密码":
+        if u"密码" in res:
             table.ix[tel_num, 'jimuhezi'] = 1
         # 没注册过
-        elif res in u"不存在":
+        elif u"不存在" in res:
             table.ix[tel_num, 'jimuhezi'] = 0
         else:
-            table.ix[tel_num, 'jimuhezi'] = -1
+            table.ix[tel_num, 'jimuhezi'] = str(res)

@@ -63,7 +63,7 @@ class RenRenDai(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print self.__class__.__name__, e
             print "================="
@@ -77,7 +77,7 @@ class RenRenDai(object):
         elif res.get("code") == 10022:
             table.ix[tel_num, 'renrendai'] = 0
         else:
-            table.ix[tel_num, 'renrendai'] = -1
+            table.ix[tel_num, 'renrendai'] = str(res)
 
 
 if __name__ == '__main__':

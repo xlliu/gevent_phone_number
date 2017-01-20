@@ -42,7 +42,7 @@ class Renrendaikuan(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
+                time.sleep(1)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
@@ -53,7 +53,7 @@ class Renrendaikuan(object):
                 self.deal_result(res, table, tel_num)
         except Exception as e:
             print "================="
-            if result.text:
+            if result:
                 print result.text
             print e
             print "================="
@@ -68,7 +68,7 @@ class Renrendaikuan(object):
         elif res['msg'] == '帐号不存在，请重新输入!':
             table.ix[tel_num, 'renrendaikuan'] = 0
         else:
-            table.ix[tel_num, 'renrendaikuan'] = -1
+            table.ix[tel_num, 'renrendaikuan'] = str(res)
 
 if __name__ == '__main__':
     session = requests.Session()
@@ -97,4 +97,4 @@ if __name__ == '__main__':
     elif res['msg'] == u'帐号不存在，请重新输入!':
         print 0
     else:
-        print -1
+        print result.text
