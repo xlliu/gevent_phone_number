@@ -48,7 +48,6 @@ class TouNa(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.get(self.login_url, params=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:

@@ -40,7 +40,6 @@ class Xiaoqian(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
@@ -60,33 +59,29 @@ class Xiaoqian(object):
 
     def deal_result(self, res, table, tel_num):
         # 注册过
-        if res['status'] == 1:
+        if res['info'] == u'\u8d26\u53f7\u5bc6\u7801\u4e0d\u5339\u914d':
             table.ix[tel_num, 'xiaoqian2'] = 1
         # 没注册过
-        elif res['status'] == 0:
+        elif res['info'] == u'\u7528\u6237\u4e0d\u5b58\u5728':
             table.ix[tel_num, 'xiaoqian2'] = 0
         else:
             table.ix[tel_num, 'xiaoqian2'] = -1
 
 if __name__ == '__main__':
-    session = requests.Session()
-    login_url = "http://www.xiaoqiandai.com/ajax/users/login"
-    headers = {
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-        "X-Requested-With": "XMLHttpRequest"
-    }
-    data = {
-        "username": 13661268212,
-        "password": 'w123456'
-    }
-    result = session.post(login_url, data=data, headers=headers)
-    print result.text
-    res = json.loads(result.text)
-    if res['status'] == 1:
-        print 1
-    # 没注册过
-    elif res['status'] == 0:
-        print 0
-    else:
-        print -1
+    import requests
+    tel_num = '13661268212'
+    session = requests.session()
+    table = {}
+    class Test(Xiaoqian):
+        def deal_result(self, res, table, tel_num):
+            print res
+            # 注册过
+            if res['info'] == u'\u8d26\u53f7\u5bc6\u7801\u4e0d\u5339\u914d':
+                print 1
+            # 没注册过
+            elif res['info'] == u'\u7528\u6237\u4e0d\u5b58\u5728':
+                print 0
+            else:
+                print -1
+    test = Test()
+    test.run(tel_num, session, table)

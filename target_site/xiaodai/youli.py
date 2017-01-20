@@ -50,7 +50,6 @@ class YouLi(object):
             res = result.text
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
                 res = result.text
             except Exception as e:
@@ -76,7 +75,9 @@ class YouLi(object):
         elif res == "-2":
             table.ix[tel_num, 'youli'] = 0
         else:
-            table.ix[tel_num, 'youli'] = str(res)
+            table.ix[tel_num, 'youli'] = -1
+            
+            
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'
@@ -84,6 +85,7 @@ if __name__ == '__main__':
     table = {}
     class Test(YouLi):
         def deal_result(self, res, table, tel_num):
+            print res
             # 注册过
             if res == "-4":
                 print u'注册过'

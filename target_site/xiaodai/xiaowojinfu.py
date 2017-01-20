@@ -47,7 +47,6 @@ class XiaoWoJinFu(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
@@ -76,11 +75,13 @@ class XiaoWoJinFu(object):
             table.ix[tel_num, 'xiaowojinfu'] = -1
 if __name__ == '__main__':
     import requests
-    tel_num = '15541860723'
+    tel_num = '13661268212'
     session = requests.session()
     table = {}
     class Test(XiaoWoJinFu):
         def deal_result(self, res, table, tel_num):
+            print res
+            print "-"
             # 注册过
             if res.get("mobilePhone") == "1":
                 print u'注册过'

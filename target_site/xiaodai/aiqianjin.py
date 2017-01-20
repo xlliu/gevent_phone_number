@@ -52,11 +52,7 @@ class AiQianJin(object):
             result = session.post(self.login_url, verify=False, json=self.data, headers=self.headers)
             res = json.loads(result.text)
         except ProxyError as e:
-            print "================="
-            print self.__class__.__name__, e
-            print "================="
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, verify=False, json=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:

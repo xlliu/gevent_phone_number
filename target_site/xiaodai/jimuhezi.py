@@ -50,7 +50,7 @@ class JiMuHeZi(object):
             res = result.text
         except ProxyError as e:
             try:
-                time.sleep(2)
+                time.sleep(1)
                 result = session.get(self.login_url, verify=False, data=self.data, headers=self.headers)
                 res = result.text
             except Exception as e:
@@ -69,11 +69,30 @@ class JiMuHeZi(object):
             self.deal_result(res, table, tel_num)
 
     def deal_result(self, res, table, tel_num):
-        print res
         if u"密码" in res:
             table.ix[tel_num, 'jimuhezi'] = 1
         # 没注册过
         elif u"不存在" in res:
             table.ix[tel_num, 'jimuhezi'] = 0
         else:
-            table.ix[tel_num, 'jimuhezi'] = str(res)
+            table.ix[tel_num, 'jimuhezi'] = -1
+
+if __name__ == '__main__':
+    import requests
+    tel_num = '15541860723'
+    session = requests.session()
+    table = {}
+    class Test(JiMuHeZi):
+        def deal_result(self, res, table, tel_num):
+            print res
+            print "-"
+            # 注册过
+            if u"密码" in res:
+                print u'注册过'
+            # 没注册过
+            elif u"不存在" in res:
+                print u'没注册过'
+            else:
+                print u'未知'
+    test = Test()
+    test.run(tel_num, session, table)

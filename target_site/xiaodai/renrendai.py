@@ -45,15 +45,11 @@ class RenRenDai(object):
         result = None
         self.data["mobile"] = tel_num
         try:
-            result = session.post(self.login_url, verify=False, json=self.data, headers=self.headers)
+            result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
             res = json.loads(result.text)
         except ProxyError as e:
-            print "================="
-            print self.__class__.__name__, e
-            print "================="
             try:
-                time.sleep(2)
-                result = session.post(self.login_url, verify=False, json=self.data, headers=self.headers)
+                result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
                 print "================="
@@ -77,16 +73,23 @@ class RenRenDai(object):
         elif res.get("code") == 10022:
             table.ix[tel_num, 'renrendai'] = 0
         else:
-            table.ix[tel_num, 'renrendai'] = str(res)
-
+            table.ix[tel_num, 'renrendai'] = -1
 
 if __name__ == '__main__':
     import requests
-    import pandas as pd
-    tel_num = u'15541860723'
-    table = pd.DataFrame(index=[tel_num, ], columns=[u"dianrong", ])
-    print table
+    # tel_num = '18310502300'
+    tel_num = '13661268212'
     session = requests.session()
-    test = DianRong()
+    table = {}
+    class Test(RenRenDai):
+        def deal_result(self, res, table, tel_num):
+            print res
+            if res.get("code") == 10031:
+                print 1
+            # 没注册过
+            elif res.get("code") == 10022:
+                print 0
+            else:
+                print -1
+    test = Test()
     test.run(tel_num, session, table)
-    print table

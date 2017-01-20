@@ -28,13 +28,13 @@ class Feidai(object):
         }
         self.data = {
             "mobile": None,
-            # "mobileDeviceId":"95276306863246326",
-            # "mobileModel":"AOSP on HammerHead",
-            # "client":1,
-            # "mobileSystemId":"6.0.1",
-            # "versionId":"5.0.0",
-            # "mobileOtherInfo":{"width":1080,"height":1776,"brand":"Android","allApp":"你我贷借款,随借随还,RE文件管理器,Via,豌豆荚,diycode"},
-            # "flag":1
+            "mobileDeviceId":"95276306863246326",
+            "mobileModel":"AOSP on HammerHead",
+            "client":1,
+            "mobileSystemId":"6.0.1",
+            "versionId":"5.0.0",
+            "mobileOtherInfo":{"width":1080,"height":1776,"brand":"Android","allApp":"你我贷借款,随借随还,RE文件管理器,Via,豌豆荚,diycode"},
+            "flag":1
         }
 
     def run(self, tel_num, session, table):
@@ -46,7 +46,6 @@ class Feidai(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
@@ -73,32 +72,22 @@ class Feidai(object):
             table.ix[tel_num, 'feidai'] = 0
         else:
             table.ix[tel_num, 'feidai'] = -1
-
+    
 if __name__ == '__main__':
-    session = requests.Session()
-    login_url = "https://app.feidai.com/SJDKSer/sjdk/user/sendSmsCode"
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Host": "app.feidai.com",
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 6.0.1; AOSP on HammerHead Build/MOB30H)",
-    }
-    data = {
-        "mobile": None,
-        # "mobileDeviceId":"95276306863246326",
-        # "mobileModel":"AOSP on HammerHead",
-        # "client":1,
-        # "mobileSystemId":"6.0.1",
-        # "versionId":"5.0.0",
-        # "mobileOtherInfo":{"width":1080,"height":1776,"brand":"Android","allApp":"你我贷借款,随借随还,RE文件管理器,Via,豌豆荚,diycode"},
-        # "flag":1
-    }
-    result = session.post(login_url, verify=False, data=data, headers=headers)
-    print result.text
-    res = json.loads(result.text)
-    if res['code'] == '0000':
-        print 1
-    # 没注册过
-    elif res['code'] == '-3003':
-        print 0
-    else:
-        print -1
+    import requests
+    # tel_num = '18310502300'
+    tel_num = '13661268212'
+    session = requests.session()
+    table = {}
+    class Test(Feidai):
+        def deal_result(self, res, table, tel_num):
+            print res
+            if res['code'] == '0000':
+                print 1
+            # 没注册过
+            elif res['code'] == '-3003':
+                print 0
+            else:
+                print -1
+    test = Test()
+    test.run(tel_num, session, table)

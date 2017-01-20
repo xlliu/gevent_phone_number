@@ -23,14 +23,24 @@ class Renrendaikuan(object):
     def __init__(self):
         self.login_url = "http://apiv2.rrjk.xiaoweixuedai.com/"
         self.headers = headers = {
+            # "Content-Type":"application/json; charset=utf-8",
+            # "Host":"apiv2.rrjk.xiaoweixuedai.com",
+            "User-Agent":"okhttp/3.3.1",
+            "x-ua":"TB API [Android] V3.0",
+            "x-plateform":"Android AOSP on HammerHead",
+            "x-client-version":"3.0",
+            "x-plateform-version":"6.0.1",
+            "Cookie":"",
             "Content-Type":"application/json; charset=utf-8",
+            "Content-Length":"96",
             "Host":"apiv2.rrjk.xiaoweixuedai.com",
-            # "User-Agent":"okhttp/3.3.1"
+            "Connection":"Keep-Alive",
+            "Accept-Encoding":"gzip"
         }
         self.data = {
             "service":"account.login",
             "mobile": "",
-            "password": ""
+            "password": "2e749230d7490b5536c0b5b0c9d3a33a"
         }
 
     def run(self, tel_num, session, table):
@@ -43,7 +53,7 @@ class Renrendaikuan(object):
         except ProxyError:
             try:
                 time.sleep(1)
-                result = session.post(self.login_url, data=self.data, headers=self.headers)
+                result = session.post(self.login_url, params=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
                 print "================="
@@ -68,33 +78,24 @@ class Renrendaikuan(object):
         elif res['msg'] == '帐号不存在，请重新输入!':
             table.ix[tel_num, 'renrendaikuan'] = 0
         else:
-            table.ix[tel_num, 'renrendaikuan'] = str(res)
+            table.ix[tel_num, 'renrendaikuan'] = -1
+
 
 if __name__ == '__main__':
-    session = requests.Session()
-    login_url = "http://apiv2.rrjk.xiaoweixuedai.com/"
-    headers = {
-        # "x-ua":"TB API [Android] V3.0",
-        # "x-plateform":"Android AOSP on HammerHead",
-        # "x-client-version":"3.0",
-        # "x-plateform-version":"6.0.1",
-        "Content-Type":"application/json; charset=utf-8",
-        "Host":"apiv2.rrjk.xiaoweixuedai.com",
-        # "Remote Address":"apiv2.rrjk.xiaoweixuedai.com/139.224.73.7",
-        "User-Agent":"okhttp/3.3.1"
-    }
-    data = {
-        "service":"account.login",
-        "mobile": "18310502300",
-        "password": "123123"
-    }
-    result = session.post(login_url, data=data, headers=headers)
-    print result.text
-    res = json.loads(result.text)
-    if res['msg'] == u'帐号或密码错误，请重新输入!':
-        print 1
-    # 没注册过
-    elif res['msg'] == u'帐号不存在，请重新输入!':
-        print 0
-    else:
-        print result.text
+    import requests
+    # tel_num = '18310502300'
+    tel_num = '13661268212'
+    session = requests.session()
+    table = {}
+    class Test(Renrendaikuan):
+        def deal_result(self, res, table, tel_num):
+            print res
+            if res['msg'] == u'帐号或密码错误，请重新输入!':
+                print 1
+            # 没注册过
+            elif res['msg'] == u'帐号不存在，请重新输入!':
+                print 0
+            else:
+                print -1
+    test = Test()
+    test.run(tel_num, session, table)

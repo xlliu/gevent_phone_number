@@ -25,7 +25,7 @@ class YiDai(object):
     def __init__(self):
         self.login_url = "http://www.moerlong.com/user/exist/"
         self.headers = {
-            "Accept-Language": "zh-CN,zh;q=0.8",
+            # "Accept-Language": "zh-CN,zh;q=0.8",
             "Host": "www.moerlong.com",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
             "Referer":"http://www.moerlong.com/user/register/",
@@ -44,11 +44,13 @@ class YiDai(object):
         self.data["phone"] = tel_num
         try:
             result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
+            print result
+            print result.text
             res = result.text
         except ProxyError:
             try:
-                time.sleep(2)
-                result = session.post(self.login_url, data=self.data, headers=self.headers)
+                time.sleep(1)
+                result = session.post(self.login_url, verify=False, data=self.data, headers=self.headers)
                 res = result.text
             except Exception as e:
                 print "================="
@@ -76,11 +78,14 @@ class YiDai(object):
             table.ix[tel_num, 'yidai'] = -1
 if __name__ == '__main__':
     import requests
-    tel_num = '15541860723'
+    tel_num = '13661268212'
+    # tel_num = '15541860723'
     session = requests.session()
     table = {}
     class Test(YiDai):
         def deal_result(self, res, table, tel_num):
+            print res
+            print "="
             # 注册过
             if res == "1":
                 print u'注册过'

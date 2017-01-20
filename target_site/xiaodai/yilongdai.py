@@ -45,7 +45,6 @@ class YiLongDai(object):
             res = json.loads(result.text)
         except ProxyError:
             try:
-                time.sleep(2)
                 result = session.post(self.login_url, data=self.data, headers=self.headers)
                 res = json.loads(result.text)
             except Exception as e:
@@ -71,7 +70,7 @@ class YiLongDai(object):
         elif res.get("jsonData",{}).get('tip') == "success":
             table.ix[tel_num, 'yidongdai'] = 0
         else:
-            table.ix[tel_num, 'yidongdai'] = str(res)
+            table.ix[tel_num, 'yidongdai'] = -1
 if __name__ == '__main__':
     import requests
     tel_num = '15541860723'
