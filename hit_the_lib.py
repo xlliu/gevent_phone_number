@@ -5,7 +5,7 @@ import gevent
 import gevent.monkey
 from gevent import pool
 
-gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=False, os=True, ssl=True, httplib=False,
+gevent.monkey.patch_all(socket=True, dns=True, time=True, select=True, thread=True, os=True, ssl=True, httplib=False,
                         subprocess=True, sys=False, aggressive=True, Event=False,
                         builtins=True, signal=True)
 # gevent.monkey.patch_select()
@@ -74,7 +74,7 @@ class HitTheLibrary(object):
                    'https': 'http://{}:8080'.format(PROXY_HOST)}
 
         self.session = requests.session()
-        # self.session.proxies = PROXIES
+        self.session.proxies = PROXIES
         self._sites_and_sites_names = {
             # xlliu 普通
             # HuaLi(): "huali",
@@ -104,7 +104,7 @@ class HitTheLibrary(object):
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 10
+        self._step = 5
         self._sleep = 1
 
         self.__run()
@@ -114,7 +114,7 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=5, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=1800, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
@@ -158,10 +158,10 @@ class HitTheLibrary(object):
         # 测试截取30
         df2 = df1.loc[:, [column]][df1.tel.str.contains(r'^\d{11}$')]
         self._TABLE = self.__table(df2)
-        time_num = int(math.ceil(len(df2.index) / self._step))
-        # time_num = int(math.ceil(50 / self._step))
+        time_num = int(math.ceil(len(df1.index) / self._step))
+        # time_num = int(math.ceil(500 / self._step))
         print "----"
-        print "循环总次数: %d, Table表总长度/并发数: %d/%d" %(time_num, len(df1.index), self._step)
+        print "循环总次数: %d, Table表总长度/并发数: %d/%d" %(time_num, len(df2.index), self._step)
         print "----"
         # _pool = multiprocessing.Pool()
         n1 = 0
@@ -173,7 +173,10 @@ class HitTheLibrary(object):
             print "n1: %d" %n1
             print "===================GoGoGo: %d=====================" % n
             # self.__generator_tasks(df2)
+            if len(f3):
+                continue
             _pool.apply_async(self.return_params, args=(df3,), callback=self.generator_tasks)
+            
             time.sleep(self._sleep)
         # _pool.close()
         # _pool.join()
@@ -189,7 +192,7 @@ class HitTheLibrary(object):
                 c += cc
             print "读秒次数: %d 已完成: %d/总数: %d " % (n, c, len(nat))
             if c == len(nat):
-                time.sleep(30)
+                # time.sleep(30)
                 print "write file start"
                 # , chunksize=5000
                 self._TABLE.to_csv(path_or_buf="./run_result/%s" % self._file_name.split(r"/")[2])
