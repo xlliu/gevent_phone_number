@@ -69,11 +69,15 @@ class HitTheLibrary(object):
         self._file_name = file_name
         self.all_tasks = []
         self.all_tasks_ok = None
-        # PROXY_HOST = "120.92.137.32"
+        PROXY_HOST = "120.92.137.32"
         PROXIES = {'http': 'http://{}:8080'.format(PROXY_HOST),
-                   'https': 'http://{}:8080'.format(PROXY_HOST)}
+                   #'https': 'http://{}:8080'.format(PROXY_HOST)
+        }
 
         self.session = requests.session()
+        self.session.headers = {
+            'Connection':'close'
+        }
         self.session.proxies = PROXIES
         self._sites_and_sites_names = {
             # xlliu 普通
@@ -84,7 +88,7 @@ class HitTheLibrary(object):
             # GongPengJia(): "gongpingjia",
             # xlliu 小贷
             AiQianJin(): "aiqianjin",
-            DianRong(): "dianrong",
+            # DianRong(): "dianrong",
             MaiDanXia(): "maidanxia",
             RenRenDai(): "renrendai",
             # JiMuHeZi(): "jimuhezi", # 有问题 无返回, 初步分析手机号存在加密
@@ -104,7 +108,7 @@ class HitTheLibrary(object):
         }
         self._sites = self._sites_and_sites_names.keys()
         self._sites_table_columns = self._sites_and_sites_names.values()
-        self._step = 5
+        self._step = 20
         self._sleep = 1
 
         self.__run()
@@ -114,7 +118,7 @@ class HitTheLibrary(object):
         # gevent.sleep(4)
         # print('Running in tel_num: %s' %tel_num)
         tasks = [gevent.spawn(getattr(site, "run"), tel_num, self.session, self._TABLE) for site in self._sites]
-        success_tasks_call_sites = gevent.joinall(tasks, timeout=1800, raise_error=False)
+        success_tasks_call_sites = gevent.joinall(tasks, timeout=5, raise_error=False)
         # diff = set(tasks).difference(set(success_tasks_call_sites))
         # if diff:
         #     print "==============================================="
@@ -159,7 +163,7 @@ class HitTheLibrary(object):
         df2 = df1.loc[:, [column]][df1.tel.str.contains(r'^\d{11}$')]
         self._TABLE = self.__table(df2)
         time_num = int(math.ceil(len(df1.index) / self._step))
-        # time_num = int(math.ceil(500 / self._step))
+        # time_num = int(math.ceil(1000 / self._step))
         print "----"
         print "循环总次数: %d, Table表总长度/并发数: %d/%d" %(time_num, len(df2.index), self._step)
         print "----"
@@ -170,14 +174,16 @@ class HitTheLibrary(object):
             print str(n * self._step), str((n + 1) * self._step - 1)
             df3 = df2.loc[n * self._step:(n + 1) * self._step - 1, [column]].values
             n1 += len(df3)
-            print "n1: %d" %n1
+            n2 = len(df3)
+            print "n1: %d, n2: %d" %(n1, n2)
             print "===================GoGoGo: %d=====================" % n
             # self.__generator_tasks(df2)
-            if len(f3):
+            if not n2:
+                print u'df3 是空的'
                 continue
-            _pool.apply_async(self.return_params, args=(df3,), callback=self.generator_tasks)
-            
-            time.sleep(self._sleep)
+            # _pool.apply_async(self.return_params, args=(df3,), callback=self.generator_tasks)
+            _pool.map_cb(self.return_params, df3, callback=self.generator_tasks)
+            # time.sleep(self._sleep)
         # _pool.close()
         # _pool.join()
         nat = self.all_tasks
